@@ -1,9 +1,10 @@
-package com.answer.best;
+package com.answer.best.controller;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,11 +21,7 @@ import com.answer.best.dao.UserService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-class BestApplicationTests {
-
-	@Test
-	void contextLoads() {
-	}
+public class JwtTokenControllerTest {
 	
 	@MockBean
 	UserService userService;
@@ -45,6 +42,5 @@ class BestApplicationTests {
 		 assertNotNull(token);
 	        mvc.perform(MockMvcRequestBuilders.get("/user/answers").header("Authorization", token)).andExpect(status().isOk());
 	}
-
 
 }
