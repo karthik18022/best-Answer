@@ -26,12 +26,12 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity(responseVo, HttpStatus.NOT_FOUND);
 	}
 
-	@ExceptionHandler(MySQLIntegrityConstraintViolationException.class)
+	@ExceptionHandler(EmailFoundException.class)
 	public ResponseEntity<?> validException(Exception exception, WebRequest request) {
 		ResponseVo responseVo = new ResponseVo();
 		responseVo.setCode(HttpServletResponse.SC_EXPECTATION_FAILED);
 		responseVo.setStatus(MessageStore.FAILURE);
-		responseVo.setMessage(MessageStore.EMAIL_FOUND_EXCEPTION);
+		responseVo.setMessage(exception.getMessage());
 		return new ResponseEntity(responseVo, HttpStatus.BAD_REQUEST);
 	}
 

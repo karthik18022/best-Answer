@@ -1,21 +1,10 @@
 package com.answer.best;
 
-import static org.junit.Assert.assertNotNull;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import com.answer.best.dao.JwtTokenUtil;
-import com.answer.best.dao.UserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
@@ -24,26 +13,6 @@ class BestApplicationTests {
 
 	@Test
 	void contextLoads() {
-	}
-	
-	@MockBean
-	UserService userService;
-	
-	@MockBean
-	JwtTokenUtil jwtTokenUtil;
-	
-	@Autowired
-	 private MockMvc mvc;
-	
-	@Test
-	public void tokenTest() throws Exception {
-		String email="madhu@gmail.com";
-		String password="password";
-		
-		UserDetails userDetails=userService.loadUserByUsername(email);
-		String token=jwtTokenUtil.generateToken(userDetails);
-		 assertNotNull(token);
-	        mvc.perform(MockMvcRequestBuilders.get("/user/answers").header("Authorization", token)).andExpect(status().isOk());
 	}
 
 

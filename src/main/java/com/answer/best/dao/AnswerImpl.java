@@ -16,7 +16,7 @@ import com.answer.best.entity.Questions;
 import com.answer.best.entity.Score;
 import com.answer.best.entity.User;
 import com.answer.best.entity.UserAnswer;
-import com.answer.best.exception.ValidatationExcption;
+import com.answer.best.exception.EmailFoundException;
 import com.answer.best.repository.AnswerRepo;
 import com.answer.best.repository.ScoreRepo;
 import com.answer.best.repository.UserAnswerRepo;
@@ -62,9 +62,11 @@ public class AnswerImpl {
 		user.setUserName(request.getUsername());
 		String password = config.passwordEncoder().encode(request.getPassword());
 		user.setPassword(password);
-		if (user.getEmail() != null) {
+		User userObjV1 = userRepo.findByEmail(request.getEmail());
+		if (userObjV1 != null) {
+			throw new EmailFoundException("email already found exception");
+		}
 			userRepo.save(user);
-			User userObjV1 = userRepo.findByEmail(request.getEmail());
 			for (QuestionRequest questionRequest : request.getRequest()) {
 				UserAnswer userAnswer = new UserAnswer();
 				String userAns = questionRequest.getUserAnswer();
@@ -81,8 +83,7 @@ public class AnswerImpl {
 			scoreObj.setScore(score);
 			scoreObj.setUser(userObjV1);
 			scoreRepo.save(scoreObj);
-		}
-
+		
 		return request;
 	}
 

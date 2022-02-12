@@ -1,13 +1,13 @@
 package com.answer.best.exception;
 
-public class ValidatationExcption extends RuntimeException {
+public class EmailFoundException extends RuntimeException {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
-	public ValidatationExcption(String message) {
+	
+	public EmailFoundException(String message) {
 		super(message);
 	}
 

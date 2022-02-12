@@ -1,18 +1,15 @@
 package com.answer.best.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aspectj.weaver.patterns.TypePatternQuestions.Question;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,43 +38,42 @@ import com.answer.best.repository.UserRepo;
 import com.answer.best.request.QuestionRequest;
 import com.answer.best.request.RequestVO;
 import com.answer.best.response.QuestionResponse;
-
+import com.answer.best.response.ResponseVo;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 public class QuestionControllerTest {
 
-    @InjectMocks
-	QuestionController questionController;
-	
 	@MockBean
 	QuestionImpl questionImpl;
-	
+
 	@MockBean
 	AnswerImpl answerImpl;
-	
+
 	@Mock
 	QuestionRepo questionRepo;
-	
+
 	@Mock
 	UserRepo userRepo;
 
 	@Autowired
-	  private MockMvc mvc;
-	
-	 @Autowired
-	  private WebApplicationContext webApplicationContext;
-	 
-	 @Before
-	  public void setUp() {
-	    mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-	  }
-	
+	private MockMvc mvc;
+
+	@Autowired
+	private WebApplicationContext webApplicationContext;
+
+	@Before
+	public void setUp() {
+		mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+	}
+
 	@Test
-	public void test() throws Exception {
-		List<QuestionResponse> list=new ArrayList<>();
-		QuestionResponse question=new QuestionResponse();
+	public void getQuestion() throws Exception {
+		List<QuestionResponse> list = new ArrayList<>();
+		QuestionResponse question = new QuestionResponse();
 		question.setQuestionId(11);
 		question.setQuestion("test");
 		question.setOptionA("test-1");
@@ -85,17 +81,18 @@ public class QuestionControllerTest {
 		question.setOptionC("test-3");
 		question.setOptionD("test-4");
 		list.add(question);
-		  Mockito.when(questionImpl.getQuestions()).thenReturn(list);
-		  mvc.perform(get("/questions")).andExpect(status().isOk()).andExpect(jsonPath("$", Matchers.aMapWithSize(4)));
+		Mockito.when(questionImpl.getQuestions()).thenReturn(list);
+		mvc.perform(get("/questions")).andExpect(status().isOk()).andExpect(jsonPath("$", Matchers.aMapWithSize(4)));
+		
 //          .andExpect(jsonPath("$.response", Matchers.equalTo("questionId=11,question=test,optionA=test-1,optionB=test-2,optionC=test-3,optionD=test-4")));
 //		List<QuestionResponse> questionList=questionImpl.getQuestions();
 //		assertNotNull(questionList);
-		}
-	
+	}
+
 	@Test
 	public void addQuestion() throws Exception {
 		String url = "http://localhost:8080" + "/question";
-		Questions question=new Questions();
+		Questions question = new Questions();
 		question.setQuestionId(11);
 		question.setQuestion("test");
 		question.setOptionA("test-1");
@@ -103,69 +100,65 @@ public class QuestionControllerTest {
 		question.setOptionC("test-3");
 		question.setOptionD("test-4");
 		question.setAnswer("answer");
-		 com.google.gson.Gson gson=new com.google.gson.Gson();
-		 String json=gson.toJson(question);
-	    MvcResult result = mvc.perform(
-	            post(url)
-	            .contentType(MediaType.APPLICATION_JSON)
-	            .content(json))
-	            .andExpect(status().isOk())
-	            .andReturn();
-	    Assert.assertNotNull(result);
+		com.google.gson.Gson gson = new com.google.gson.Gson();
+		String json = gson.toJson(question);
+		MvcResult result = mvc.perform(post(url).contentType(MediaType.APPLICATION_JSON).content(json))
+				.andExpect(status().isOk()).andReturn();
+		Assert.assertNotNull(result);
 //	    Mockito.verify(questionImpl,Mockito.times(1)).addQuestion();
-	 
+
 	}
-	
+
 	@Test
 	public void addAnswer() throws Exception {
 		String url = "http://localhost:8080" + "/userAnswer";
-		RequestVO req=new RequestVO();
+		RequestVO req = new RequestVO();
 		req.setEmail("test@gmail.com");
 		req.setPassword("test");
-	    List<QuestionRequest> list=new ArrayList<>();
-	    QuestionRequest qRequest=new QuestionRequest();
-	    qRequest.setQuestionId(1);
-	    qRequest.setUserAnswer("gandhi");
-	    list.add(qRequest);
-	    qRequest.setQuestionId(92);
-	    qRequest.setUserAnswer("sachin");
-	    list.add(qRequest);
-	    qRequest.setQuestionId(93);
-	    qRequest.setUserAnswer("cpu");
-	    list.add(qRequest);
-	    req.setRequest(list);
-	    req.setUsername("test");
-	    com.google.gson.Gson gson=new com.google.gson.Gson();
-		 String json=gson.toJson(req);
-		 MvcResult result = mvc.perform(
-		            post(url)
-		            .contentType(MediaType.APPLICATION_JSON)
-		            .content(json))
-		            .andExpect(status().isOk())
-		            .andReturn();
-		    Assert.assertNotNull(result);
+		List<QuestionRequest> list = new ArrayList<>();
+		QuestionRequest qRequest = new QuestionRequest();
+		qRequest.setQuestionId(1);
+		qRequest.setUserAnswer("gandhi");
+		list.add(qRequest);
+		qRequest.setQuestionId(92);
+		qRequest.setUserAnswer("sachin");
+		list.add(qRequest);
+		qRequest.setQuestionId(93);
+		qRequest.setUserAnswer("cpu");
+		list.add(qRequest);
+		req.setRequest(list);
+		req.setUsername("test");
+		com.google.gson.Gson gson = new com.google.gson.Gson();
+		String json = gson.toJson(req);
+		MvcResult result = mvc.perform(post(url).contentType(MediaType.APPLICATION_JSON).content(json))
+				.andExpect(status().isOk()).andReturn();
+		Assert.assertNotNull(result);
 //	    answerImpl.postAnswer(req);
 //	    Mockito.verify(answerImpl,Mockito.times(1)).postAnswer(req);
 //	    Assert.assertNotNull(req);
 	}
-	
+
 	@Test
-	public void existentUserCanGetTokenAndAuthentication() throws Exception {
-	    String email = "kanimozhi@gmail.com";
-	    String password = "password";
+	public void jwtTokenTest() throws Exception {
+		String email = "kanimozhi@gmail.com";
+		String password = "password";
 
-	    String body = "{\"email\":\"" + email + "\", \"password\":\""+ password + "\"}";
+		String body = "{\"email\":\"" + email + "\", \"password\":\"" + password + "\"}";
 
-	    MvcResult result = mvc.perform(MockMvcRequestBuilders.post("/authenticate").contentType(MediaType.APPLICATION_JSON)
-	            .content(body))
-	            .andExpect(status().isOk()).andReturn();
+		MvcResult result = mvc.perform(
+				MockMvcRequestBuilders.post("/authenticate").contentType(MediaType.APPLICATION_JSON).content(body))
+				.andExpect(status().isOk()).andReturn();
+		ObjectMapper mapper = new ObjectMapper();
+		ResponseVo auctual = mapper.readValue(result.getResponse().getContentAsString(),
+				new TypeReference<ResponseVo>() {
+				});
+		String response = auctual.getResponse().toString();
+		String token = response.substring(10, 202);
+		Principal mockPrincipal = Mockito.mock(Principal.class);
+		Mockito.when(mockPrincipal.getName()).thenReturn("kanimozhi@gmail.com");
 
-	    String response = result.getResponse().getContentAsString();
-	    response = response.replace("{\"jwttoken\": \"", "");
-	    String token = response.replace("\"}", "");
-
-	    mvc.perform(MockMvcRequestBuilders.get("/user/answers")
-	        .header("Authorization", "Bearer " + token))
-	        .andExpect(status().isOk());
+		mvc.perform(MockMvcRequestBuilders.get("/user/answers").principal(mockPrincipal).header("Authorization",
+				"Bearer " + token)).andExpect(status().isOk());
+		assertEquals("kanimozhi@gmail.com", mockPrincipal.getName());
 	}
 }
