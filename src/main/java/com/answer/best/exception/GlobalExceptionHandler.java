@@ -1,7 +1,6 @@
 package com.answer.best.exception;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.ValidationException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +32,7 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity(responseVo, HttpStatus.BAD_REQUEST);
 	}
 
-	@ExceptionHandler(ValidationException.class)
+	@ExceptionHandler(EmailValidatationException.class)
 	public ResponseEntity<?> validException1(Exception exception, WebRequest request) {
 		ResponseVo responseVo = new ResponseVo();
 		responseVo.setCode(HttpServletResponse.SC_BAD_REQUEST);

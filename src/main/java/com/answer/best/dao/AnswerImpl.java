@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.transaction.Transactional;
-import javax.validation.ValidationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,6 +16,7 @@ import com.answer.best.entity.Score;
 import com.answer.best.entity.User;
 import com.answer.best.entity.UserAnswer;
 import com.answer.best.exception.EmailFoundException;
+import com.answer.best.exception.EmailValidatationException;
 import com.answer.best.repository.AnswerRepo;
 import com.answer.best.repository.ScoreRepo;
 import com.answer.best.repository.UserAnswerRepo;
@@ -56,7 +56,7 @@ public class AnswerImpl {
 		User user = new User();
 		boolean valid = AnswerImpl.validateEmail(request.getEmail());
 		if (valid == false) {
-			throw new ValidationException("email is not valid");
+			throw new EmailValidatationException("email is not valid");
 		}
 		user.setEmail(request.getEmail());
 		user.setUserName(request.getUsername());
