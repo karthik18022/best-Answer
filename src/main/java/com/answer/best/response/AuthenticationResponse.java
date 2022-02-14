@@ -2,17 +2,17 @@ package com.answer.best.response;
 
 public class AuthenticationResponse {
 
-    private String jwt;
+	private String refreshToken;
 
-    public String getJwt() {
-        return jwt;
-    }
+	public String getJwt() {
+		return refreshToken;
+	}
 
-    public void setJwt(String jwt) {
-        this.jwt = jwt;
-    }
+	public void setJwt(String refreshToken) {
+		this.refreshToken = refreshToken;
+	}
 
-    public AuthenticationResponse(String jwt) {
-        this.jwt = jwt;
-    }
+	public AuthenticationResponse(String refreshToken) {
+		this.refreshToken = refreshToken;
+	}
 }

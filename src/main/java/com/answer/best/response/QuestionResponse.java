@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class QuestionResponse {
-	
+
 	private int questionId;
 	private String question;
 	private String optionA;

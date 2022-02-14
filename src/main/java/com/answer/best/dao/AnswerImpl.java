@@ -54,7 +54,7 @@ public class AnswerImpl {
 
 		List<UserAnswer> answerList = new ArrayList<>();
 		User user = new User();
-		boolean valid = this.validateEmail(request.getEmail());
+		boolean valid = AnswerImpl.validateEmail(request.getEmail());
 		if (valid == false) {
 			throw new ValidationException("email is not valid");
 		}
@@ -66,24 +66,25 @@ public class AnswerImpl {
 		if (userObjV1 != null) {
 			throw new EmailFoundException("email already found exception");
 		}
-			userRepo.save(user);
-			for (QuestionRequest questionRequest : request.getRequest()) {
-				UserAnswer userAnswer = new UserAnswer();
-				String userAns = questionRequest.getUserAnswer();
-				Questions question = new Questions();
-				question.setQuestionId(questionRequest.getQuestionId());
-				userAnswer.setAnswer(userAns);
-				userAnswer.setQuestion(question);
-				userAnswer.setUser(userObjV1);
-				answerList.add(userAnswer);
-			}
-			answerRepo.saveAll(answerList);
-			int score = scoreRepo.getScore(userObjV1.getUserId());
-			Score scoreObj = new Score();
-			scoreObj.setScore(score);
-			scoreObj.setUser(userObjV1);
-			scoreRepo.save(scoreObj);
-		
+		userRepo.save(user);
+		User newUser = userRepo.findByEmail(request.getEmail());
+		for (QuestionRequest questionRequest : request.getRequest()) {
+			UserAnswer userAnswer = new UserAnswer();
+			String userAns = questionRequest.getUserAnswer();
+			Questions question = new Questions();
+			question.setQuestionId(questionRequest.getQuestionId());
+			userAnswer.setAnswer(userAns);
+			userAnswer.setQuestion(question);
+			userAnswer.setUser(newUser);
+			answerList.add(userAnswer);
+		}
+		answerRepo.saveAll(answerList);
+		int score = scoreRepo.getScore(newUser.getUserId());
+		Score scoreObj = new Score();
+		scoreObj.setScore(score);
+		scoreObj.setUser(newUser);
+		scoreRepo.save(scoreObj);
+
 		return request;
 	}
 
@@ -95,8 +96,8 @@ public class AnswerImpl {
 		List<UserAnswer> queryList = uaRepo.getUserAns(userId);
 		for (UserAnswer userAnswer : queryList) {
 			UserAnswerVo userAnswerObj = new UserAnswerVo();
-			int questionId=userAnswer.getQuestion().getQuestionId();
-			String questoin=userAnswer.getQuestion().getQuestion();
+			int questionId = userAnswer.getQuestion().getQuestionId();
+			String questoin = userAnswer.getQuestion().getQuestion();
 			userAnswerObj.setQuestionId(questionId);
 			userAnswerObj.setQuestion(questoin);
 			userAnswerObj.setUserAnswer(userAnswer.getAnswer());

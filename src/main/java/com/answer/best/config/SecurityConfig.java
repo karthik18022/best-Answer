@@ -44,9 +44,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(HttpSecurity security) throws Exception {
-		security.csrf().disable().authorizeRequests().antMatchers(EndPointStore.ADD_QUESTION,EndPointStore.GET_ALL_QUESTIONS,EndPointStore.SAVE_USERANSWER,EndPointStore.AUTHENTICATE).permitAll()
-				.anyRequest().authenticated().and().exceptionHandling().authenticationEntryPoint(expiredException).and()
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		security.csrf().disable().authorizeRequests()
+				.antMatchers(EndPointStore.ADD_QUESTION, EndPointStore.GET_ALL_QUESTIONS, EndPointStore.SAVE_USERANSWER,
+						EndPointStore.AUTHENTICATE)
+				.permitAll().anyRequest().authenticated().and().exceptionHandling()
+				.authenticationEntryPoint(expiredException).and().sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		security.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 	}
 

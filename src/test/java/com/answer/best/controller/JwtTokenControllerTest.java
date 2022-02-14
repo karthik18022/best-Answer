@@ -22,25 +22,26 @@ import com.answer.best.dao.UserService;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class JwtTokenControllerTest {
-	
+
 	@MockBean
 	UserService userService;
-	
+
 	@MockBean
 	JwtTokenUtil jwtTokenUtil;
-	
+
 	@Autowired
-	 private MockMvc mvc;
-	
+	private MockMvc mvc;
+
 	@Test
 	public void tokenTest() throws Exception {
-		String email="madhu@gmail.com";
-		String password="password";
-		
-		UserDetails userDetails=userService.loadUserByUsername(email);
-		String token=jwtTokenUtil.generateToken(userDetails);
-		 assertNotNull(token);
-	        mvc.perform(MockMvcRequestBuilders.get("/user/answers").header("Authorization", token)).andExpect(status().isOk());
+		String email = "madhu@gmail.com";
+		String password = "password";
+
+		UserDetails userDetails = userService.loadUserByUsername(email);
+		String token = jwtTokenUtil.generateToken(userDetails);
+		assertNotNull(token);
+		mvc.perform(MockMvcRequestBuilders.get("/user/answers").header("Authorization", token))
+				.andExpect(status().isOk());
 	}
 
 }

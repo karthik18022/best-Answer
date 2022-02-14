@@ -15,5 +15,4 @@ class BestApplicationTests {
 	void contextLoads() {
 	}
 
-
 }

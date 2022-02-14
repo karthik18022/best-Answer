@@ -5,24 +5,22 @@ import javax.validation.ValidationException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
 import com.answer.best.response.ResponseVo;
 import com.answer.best.store.MessageStore;
-import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-	@ExceptionHandler(UsernameNotFoundException.class)
-	public ResponseEntity<?> userNameException(String message) {
+	@ExceptionHandler(UserNameNotFoundException.class)
+	public ResponseEntity<?> userNameException(Exception exception) {
 		ResponseVo responseVo = new ResponseVo();
 		responseVo.setCode(HttpServletResponse.SC_BAD_REQUEST);
 		responseVo.setStatus(MessageStore.FAILURE);
-		responseVo.setMessage(MessageStore.EMAIL_NOT_FOUND_EXCEPTION);
+		responseVo.setMessage(exception.getMessage());
 		return new ResponseEntity(responseVo, HttpStatus.NOT_FOUND);
 	}
 

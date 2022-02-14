@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ScoreResponse {
- 
- private int score;
+
+	private int score;
 
 }

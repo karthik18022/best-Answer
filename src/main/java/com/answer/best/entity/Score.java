@@ -13,22 +13,21 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name="scores")
+@Table(name = "scores")
 @Getter
 @Setter
 public class Score {
-	
+
 	@Id
-	@Column(name="score_id")
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name = "score_id")
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer scoreId;
-	
-	@Column(name="score",nullable=false)
+
+	@Column(name = "score", nullable = false)
 	private Integer score;
-	
+
 	@OneToOne
-	@JoinColumn(name="user_id",referencedColumnName="user_id")
+	@JoinColumn(name = "user_id", referencedColumnName = "user_id")
 	private User user;
-	
 
 }

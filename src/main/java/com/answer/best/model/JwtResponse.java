@@ -10,8 +10,8 @@ import lombok.Setter;
 public class JwtResponse implements Serializable {
 
 	private static final long serialVersionUID = -8091879091924046844L;
-	private  String jwttoken;
-	
+	private String jwttoken;
+
 	public JwtResponse() {
 		super();
 	}
@@ -21,9 +21,4 @@ public class JwtResponse implements Serializable {
 		this.jwttoken = jwttoken;
 	}
 
-	
-
-	
-
-	
 }

@@ -5,9 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class QuestionRequest  {
+public class QuestionRequest {
 
 	public int questionId;
 	public String userAnswer;
-	
+
 }

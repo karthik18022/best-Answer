@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.answer.best.entity.User;
+import com.answer.best.exception.UserNameNotFoundException;
 import com.answer.best.repository.UserRepo;
 
 @Service
@@ -21,7 +22,7 @@ public class UserService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		User user = userRepo.findByEmail(email);
 		if (user == null) {
-			throw new UsernameNotFoundException("name Not found " + email);
+			throw new UserNameNotFoundException("name Not found " + email);
 		}
 		return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
 				new ArrayList<>());

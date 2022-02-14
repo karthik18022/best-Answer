@@ -15,23 +15,23 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name="users")
+@Table(name = "users")
 @Getter
 @Setter
-public class User  {
-	
+public class User {
+
 	@Id
-	@Column(name="user_id")
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name = "user_id")
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer userId;
-	
-	@Column(name="email",unique=true)
+
+	@Column(name = "email", unique = true)
 	private String email;
-	
-	@Column(name="user_name")
+
+	@Column(name = "user_name")
 	private String userName;
-	
-	@Column(name="password")
+
+	@Column(name = "password")
 	@JsonIgnore
 	private String password;
 

@@ -24,7 +24,7 @@ public class ExpiredException implements AuthenticationEntryPoint {
 	public void commence(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException authException) throws IOException, ServletException {
 		final ObjectMapper mapper = new ObjectMapper();
-		final String token = (String) request.getAttribute("expired");
+		final Object token = request.getAttribute("expired");
 		System.out.println(token);
 		if (token != null) {
 			ResponseVo res = new ResponseVo();

@@ -15,7 +15,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +32,15 @@ import org.springframework.web.context.WebApplicationContext;
 import com.answer.best.dao.AnswerImpl;
 import com.answer.best.dao.QuestionImpl;
 import com.answer.best.entity.Questions;
+import com.answer.best.model.JwtRequest;
+import com.answer.best.model.JwtResponse;
 import com.answer.best.repository.QuestionRepo;
 import com.answer.best.repository.UserRepo;
 import com.answer.best.request.QuestionRequest;
 import com.answer.best.request.RequestVO;
 import com.answer.best.response.QuestionResponse;
 import com.answer.best.response.ResponseVo;
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -64,6 +65,9 @@ public class QuestionControllerTest {
 
 	@Autowired
 	private WebApplicationContext webApplicationContext;
+	
+	final  ObjectMapper mapper = new ObjectMapper();
+
 
 	@Before
 	public void setUp() {
@@ -83,7 +87,7 @@ public class QuestionControllerTest {
 		list.add(question);
 		Mockito.when(questionImpl.getQuestions()).thenReturn(list);
 		mvc.perform(get("/questions")).andExpect(status().isOk()).andExpect(jsonPath("$", Matchers.aMapWithSize(4)));
-		
+
 //          .andExpect(jsonPath("$.response", Matchers.equalTo("questionId=11,question=test,optionA=test-1,optionB=test-2,optionC=test-3,optionD=test-4")));
 //		List<QuestionResponse> questionList=questionImpl.getQuestions();
 //		assertNotNull(questionList);
@@ -105,8 +109,6 @@ public class QuestionControllerTest {
 		MvcResult result = mvc.perform(post(url).contentType(MediaType.APPLICATION_JSON).content(json))
 				.andExpect(status().isOk()).andReturn();
 		Assert.assertNotNull(result);
-//	    Mockito.verify(questionImpl,Mockito.times(1)).addQuestion();
-
 	}
 
 	@Test
@@ -133,32 +135,28 @@ public class QuestionControllerTest {
 		MvcResult result = mvc.perform(post(url).contentType(MediaType.APPLICATION_JSON).content(json))
 				.andExpect(status().isOk()).andReturn();
 		Assert.assertNotNull(result);
-//	    answerImpl.postAnswer(req);
-//	    Mockito.verify(answerImpl,Mockito.times(1)).postAnswer(req);
-//	    Assert.assertNotNull(req);
 	}
 
 	@Test
 	public void jwtTokenTest() throws Exception {
-		String email = "kanimozhi@gmail.com";
-		String password = "password";
+		JwtRequest request = new JwtRequest();
+		request.setEmail("kanimozhi@gmail.com");
+		request.setPassword("password");
 
-		String body = "{\"email\":\"" + email + "\", \"password\":\"" + password + "\"}";
-
-		MvcResult result = mvc.perform(
-				MockMvcRequestBuilders.post("/authenticate").contentType(MediaType.APPLICATION_JSON).content(body))
+		MvcResult result = mvc.perform(MockMvcRequestBuilders.post("/authenticate")
+				.contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(request)))
 				.andExpect(status().isOk()).andReturn();
-		ObjectMapper mapper = new ObjectMapper();
-		ResponseVo auctual = mapper.readValue(result.getResponse().getContentAsString(),
-				new TypeReference<ResponseVo>() {
-				});
-		String response = auctual.getResponse().toString();
-		String token = response.substring(10, 202);
+
+		ResponseVo auctual = mapper.readValue(result.getResponse().getContentAsString(), ResponseVo.class);
+//		String json = new ObjectMapper().writeValueAsString(auctual.getResponse());
+		JsonNode jsonNode = mapper.readTree(new ObjectMapper().writeValueAsString(auctual.getResponse()));
+		JwtResponse response = new JwtResponse();
+		response.setJwttoken(jsonNode.get("jwttoken").asText());
 		Principal mockPrincipal = Mockito.mock(Principal.class);
 		Mockito.when(mockPrincipal.getName()).thenReturn("kanimozhi@gmail.com");
 
 		mvc.perform(MockMvcRequestBuilders.get("/user/answers").principal(mockPrincipal).header("Authorization",
-				"Bearer " + token)).andExpect(status().isOk());
+				"Bearer " + response.getJwttoken())).andExpect(status().isOk());
 		assertEquals("kanimozhi@gmail.com", mockPrincipal.getName());
 	}
 }
