@@ -1,19 +1,16 @@
 package com.answer.best.controller;
 
-import java.security.KeyStore.Entry;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.answer.best.dao.UserService;
 import com.answer.best.model.JwtRequest;
-import com.answer.best.response.AuthenticationResponse;
 import com.answer.best.response.BaseClass;
 import com.answer.best.response.ResponseVo;
 import com.answer.best.store.EndPointStore;
@@ -31,7 +27,6 @@ import com.answer.best.store.MessageStore;
 import io.jsonwebtoken.impl.DefaultClaims;
 
 @RestController
-@CrossOrigin
 public class JwtAuthenticationController extends BaseClass {
 
 	@Autowired
@@ -42,7 +37,7 @@ public class JwtAuthenticationController extends BaseClass {
 
 	@Autowired
 	com.answer.best.dao.JwtTokenUtil jwtTokenUtil;
-	
+
 	@GetMapping("/")
 	public String check() {
 		return "welcome";
@@ -58,6 +53,7 @@ public class JwtAuthenticationController extends BaseClass {
 		final ResponseVo responseDao = new ResponseVo();
 		return super.success(responseDao, new com.answer.best.model.JwtResponse(token), MessageStore.GET_TOKEN);
 	}
+
 	@RequestMapping(value = "/refreshtoken", method = RequestMethod.GET)
 	public ResponseVo refreshtoken(HttpServletRequest request) throws Exception {
 		// From the HttpRequest get the claims
@@ -66,8 +62,9 @@ public class JwtAuthenticationController extends BaseClass {
 		Map<String, Object> expectedMap = getMapFromIoJsonwebtokenClaims(claims);
 		String token = jwtTokenUtil.doGenerateRefreshToken(expectedMap, expectedMap.get("sub").toString());
 		final ResponseVo responseDao = new ResponseVo();
-		return super.success(responseDao, new com.answer.best.model.JwtResponse( token), MessageStore.GET_REFRESH_TOKEN);
+		return super.success(responseDao, new com.answer.best.model.JwtResponse(token), MessageStore.GET_REFRESH_TOKEN);
 	}
+
 	public Map<String, Object> getMapFromIoJsonwebtokenClaims(DefaultClaims claims) {
 		Map<String, Object> expectedMap = new HashMap<String, Object>();
 		for (java.util.Map.Entry<String, Object> entry : claims.entrySet()) {
@@ -75,6 +72,7 @@ public class JwtAuthenticationController extends BaseClass {
 		}
 		return expectedMap;
 	}
+
 	private void authenticate(String username, String password) throws Exception {
 		try {
 			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));

@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -46,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public void configure(HttpSecurity security) throws Exception {
 		security.csrf().disable().authorizeRequests()
 				.antMatchers(EndPointStore.ADD_QUESTION, EndPointStore.GET_ALL_QUESTIONS, EndPointStore.SAVE_USERANSWER,
-						EndPointStore.AUTHENTICATE,"/")
+						EndPointStore.AUTHENTICATE, "/")
 				.permitAll().anyRequest().authenticated().and().exceptionHandling()
 				.authenticationEntryPoint(expiredException).and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);

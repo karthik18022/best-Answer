@@ -65,9 +65,8 @@ public class QuestionControllerTest {
 
 	@Autowired
 	private WebApplicationContext webApplicationContext;
-	
-	final  ObjectMapper mapper = new ObjectMapper();
 
+	final ObjectMapper mapper = new ObjectMapper();
 
 	@Before
 	public void setUp() {
@@ -87,10 +86,8 @@ public class QuestionControllerTest {
 		list.add(question);
 		Mockito.when(questionImpl.getQuestions()).thenReturn(list);
 		mvc.perform(get("/questions")).andExpect(status().isOk()).andExpect(jsonPath("$", Matchers.aMapWithSize(4)));
-
-//          .andExpect(jsonPath("$.response", Matchers.equalTo("questionId=11,question=test,optionA=test-1,optionB=test-2,optionC=test-3,optionD=test-4")));
-//		List<QuestionResponse> questionList=questionImpl.getQuestions();
-//		assertNotNull(questionList);
+		JsonNode jsonNode = mapper.valueToTree(question);
+		assertEquals("test", jsonNode.get("question").asText());
 	}
 
 	@Test
@@ -148,13 +145,11 @@ public class QuestionControllerTest {
 				.andExpect(status().isOk()).andReturn();
 
 		ResponseVo auctual = mapper.readValue(result.getResponse().getContentAsString(), ResponseVo.class);
-//		String json = new ObjectMapper().writeValueAsString(auctual.getResponse());
 		JsonNode jsonNode = mapper.readTree(new ObjectMapper().writeValueAsString(auctual.getResponse()));
 		JwtResponse response = new JwtResponse();
 		response.setJwttoken(jsonNode.get("jwttoken").asText());
 		Principal mockPrincipal = Mockito.mock(Principal.class);
 		Mockito.when(mockPrincipal.getName()).thenReturn("kanimozhi@gmail.com");
-
 		mvc.perform(MockMvcRequestBuilders.get("/user/answers").principal(mockPrincipal).header("Authorization",
 				"Bearer " + response.getJwttoken())).andExpect(status().isOk());
 		assertEquals("kanimozhi@gmail.com", mockPrincipal.getName());

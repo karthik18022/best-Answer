@@ -22,7 +22,7 @@ public class UserService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		User user = userRepo.findByEmail(email);
 		if (user == null) {
-			throw new UserNameNotFoundException("name Not found " + email);
+			throw new UserNameNotFoundException("email Not found " + email);
 		}
 		return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
 				new ArrayList<>());
